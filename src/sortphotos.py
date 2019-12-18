@@ -227,7 +227,7 @@ class ExifTool(object):
 def sortPhotos(src_dir, dest_dir, sort_format, rename_format, recursive=False,
         copy_files=False, test=False, remove_duplicates=True, day_begins=0,
         additional_groups_to_ignore=['File'], additional_tags_to_ignore=[],
-        use_only_groups=None, use_only_tags=None, verbose=True, keep_filename=False):
+        use_only_groups=None, use_only_tags=None, verbose=True, keep_filename=False, older_than=0):
     """
     This function is a convenience wrapper around ExifTool based on common usage scenarios for sortphotos.py
 
@@ -309,6 +309,8 @@ def sortPhotos(src_dir, dest_dir, sort_format, rename_format, recursive=False,
     num_files = len(metadata)
     print()
 
+    archive_date = datetime.today() - timedelta(days=older_than) 
+
     if test:
         test_file_dict = {}
 
@@ -342,7 +344,15 @@ def sortPhotos(src_dir, dest_dir, sort_format, rename_format, recursive=False,
                 print()
                 # sys.stdout.flush()
             continue
-
+        
+        # check if file is old enough to be processed (--older-than parameter)
+        
+        if (date > archive_date):
+            if verbose:
+                print('file is younger than archive date, skipping.')
+                print()
+            continue
+        
         # ignore hidden files
         if os.path.basename(src_file).startswith('.'):
             print('hidden file.  will be skipped')
@@ -489,6 +499,10 @@ def main():
                     default=None,
                     help='specify a restricted set of tags to search for date information\n\
     e.g., EXIF:CreateDate')
+    parser.add_argument('--older-than', type=int, 
+                    default=0, 
+                    help='number of days from today to be ignored.\n\
+                    (e.g.: 365 => only process pics older than a year)')
 
     # parse command line arguments
     args = parser.parse_args()
@@ -496,7 +510,7 @@ def main():
     sortPhotos(args.src_dir, args.dest_dir, args.sort, args.rename, args.recursive,
         args.copy, args.test, not args.keep_duplicates, args.day_begins,
         args.ignore_groups, args.ignore_tags, args.use_only_groups,
-        args.use_only_tags, not args.silent, args.keep_filename)
+        args.use_only_tags, not args.silent, args.keep_filename, args.older_than)
 
 if __name__ == '__main__':
     main()
