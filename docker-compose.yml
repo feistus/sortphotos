@@ -1,0 +1,7 @@
+version: '3'
+services:
+  sortphotos:
+    build: .
+    volumes:
+      - "/home/fsp/tmp/src:/source"
+      - "/home/fsp/tmp/dest:/destination" 
