@@ -346,10 +346,9 @@ def sortPhotos(src_dir, dest_dir, sort_format, rename_format, recursive=False,
             continue
         
         # check if file is old enough to be processed (--older-than parameter)
-        
         if (date > archive_date):
             if verbose:
-                print('file is younger than archive date, skipping.')
+                print('file is younger than archive date (' + str(older_than) + ' days), skipping.')
                 print()
             continue
         
