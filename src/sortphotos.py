@@ -433,6 +433,8 @@ def sortPhotos(src_dir, dest_dir, sort_format, rename_format, recursive=False,
         else:
 
             if fileIsIdentical:
+                # Move file anyways to not keep any leftovers in the source folder
+                shutil.move(src_file, dest_file)
                 continue  # ignore identical files
             else:
                 if copy_files:
